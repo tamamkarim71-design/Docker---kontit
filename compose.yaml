@@ -1,0 +1,40 @@
+# Docker Compose configuration for the Node.js application
+
+services:
+  # Node.js / Express application
+  server:
+    build:
+      context: .
+
+    environment:
+      NODE_ENV: production
+
+    ports:
+      - 3000:3000
+
+    # Docker Compose Watch configuration
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /usr/src/app
+          ignore:
+            - node_modules/
+
+        - action: rebuild
+          path: package.json
+
+  # MongoDB database service
+  mongo:
+    image: mongo:8
+    restart: unless-stopped
+
+    ports:
+      - 27017:27017
+
+    volumes:
+      - mongo-data:/data/db
+
+# Persistent storage for MongoDB
+volumes:
+  mongo-data:
